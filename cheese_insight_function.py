@@ -71,7 +71,18 @@ def addTransactionDetailToDB(conn, transaction_detail):
 	conn.commit()
 	print(cur.rowcount, "was inserted.")
 
-	cur.execute("SELECT transaction_time, user_acc_id, recipient_acc_id, amount FROM transactions")
+def get_todays_transactions(conn):
+	cur.execute("SELECT user_acc_id, sum(amount) FROM transactions WHERE Date(transaction_time) like DATE(NOW()) GROUP BY user_acc_id")
+	for transaction_time, user_acc_id, recipient_acc_id, amount in cur.fetchall():
+		print transaction_time, user_acc_id, recipient_acc_id, amount	
+
+def get_week_transactions(conn):
+	cur.execute("SELECT user_acc_id, sum(amount) FROM transactions WHERE Date(transaction_time) BETWEEN DATE(NOW()) - 7 and  DATE(NOW()) + 1 GROUP BY user_acc_id")
+	for transaction_time, user_acc_id, recipient_acc_id, amount in cur.fetchall():
+		print transaction_time, user_acc_id, recipient_acc_id, amount	
+
+def get_month_transactions(conn):
+	cur.execute("SELECT user_acc_id, sum(amount) FROM transactions WHERE Date(transaction_time) BETWEEN DATE(NOW()) - 30 and  DATE(NOW()) + 1 GROUP BY user_acc_id")
 	for transaction_time, user_acc_id, recipient_acc_id, amount in cur.fetchall():
 		print transaction_time, user_acc_id, recipient_acc_id, amount	
 
