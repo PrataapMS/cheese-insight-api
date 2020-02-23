@@ -42,7 +42,8 @@ def get_cheese_insight():
 	for i  in range(10):
 		json_row = {}
 		time_str = random_date("1/1/2017 1:30 PM", "01/02/2020 4:50 AM", random.random())
-		time_stamp = time.mktime(datetime.datetime.strptime(time_str, "%m/%d/%Y %H:%M %p").timetuple())
+		# time_stamp = time.mktime(datetime.datetime.strptime(time_str, "%m/%d/%Y %H:%M %p").timetuple())
+		time_stamp = datetime.datetime.strptime(time_str, "%m/%d/%Y %H:%M %p").strftime('%Y-%m-%d %H:%M:%S')
 		json_row["transaction_time"] = time_stamp
 		json_row["user_acc_id"] = random.randrange(1000, 1100)
 		json_row["recipient_acc_id"] = random.randrange(5000, 5100)
@@ -65,12 +66,12 @@ def doQuery( conn ) :
 
 def addTransactionDetailToDB(conn, transaction_detail):
 	cur = conn.cursor()
-	insert_sql = "INSERT INTO transactions (transaction_time, user_acc_id, recipient_acc_id, amount) VALUES (%s, %s, %s, %d)"
+	insert_sql = "INSERT INTO transactions (transaction_time, user_acc_id, recipient_acc_id, amount) VALUES (%s, %s, %s, %s)"
 	cur.executemany(insert_sql, transaction_detail)
 	conn.commit()
 	print(cur.rowcount, "was inserted.")
 
-	cur.execute("SELECT (transaction_time, user_acc_id, recipient_acc_id, amount) FROM transactions")
+	cur.execute("SELECT transaction_time, user_acc_id, recipient_acc_id, amount FROM transactions")
 	for transaction_time, user_acc_id, recipient_acc_id, amount in cur.fetchall():
 		print transaction_time, user_acc_id, recipient_acc_id, amount	
 
